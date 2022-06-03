@@ -1,15 +1,20 @@
 import cv2 as cv
 import numpy as np
+from imutils.video import FileVideoStream
 
 from src.window import Window
 from src.cv_config import *
 
 
 class Tracker:
-    def __init__(self, video_path):
+    def __init__(self, video_path, useImUtils):
+        self.useImUtils = useImUtils
         self.video_path = video_path
-        self.cap = cv.VideoCapture(video_path)
         self.window = Window('Tracker')
+        if useImUtils:
+            self.cap = FileVideoStream(video_path).start()
+        else:
+            self.cap = cv.VideoCapture(video_path)
 
     def process_frame(self, frame, outputs, confidence_level):
         frame_height, frame_width = frame.shape[:2]
@@ -44,8 +49,11 @@ class Tracker:
                 # self.window.put_label(frame, label, (box_x, box_y - 5), color, 1)
 
     def run(self):
-        while True:
-            ret, frame = self.cap.read()
+        while self.cap.more() if self.useImUtils else True:
+            if self.useImUtils:
+                frame = self.cap.read()
+            else:
+                ret, frame = self.cap.read()
 
             blob = cv.dnn.blobFromImage(
                 frame, 1/255.0, (320, 320), (0, 0, 0), True, crop=False)
@@ -58,7 +66,10 @@ class Tracker:
 
             key = cv.waitKey(1)
             if key == 27:
-                self.cap.release()
+                if self.useImUtils:
+                    self.cap.stop()
+                else:
+                    self.cap.release()
                 self.window.close()
                 break
             elif key == ord(' '):
