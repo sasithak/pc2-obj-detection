@@ -7,11 +7,11 @@ from src.cv_config import *
 
 
 class Tracker:
-    def __init__(self, video_path, useImUtils):
-        self.useImUtils = useImUtils
+    def __init__(self, video_path, use_imutils):
+        self.use_imutils = use_imutils
         self.video_path = video_path
         self.window = Window('Tracker')
-        if useImUtils:
+        if use_imutils:
             self.cap = FileVideoStream(video_path).start()
         else:
             self.cap = cv.VideoCapture(video_path)
@@ -49,8 +49,8 @@ class Tracker:
                 # self.window.put_label(frame, label, (box_x, box_y - 5), color, 1)
 
     def run(self):
-        while self.cap.more() if self.useImUtils else True:
-            if self.useImUtils:
+        while self.cap.more() if self.use_imutils else True:
+            if self.use_imutils:
                 frame = self.cap.read()
             else:
                 ret, frame = self.cap.read()
@@ -66,7 +66,7 @@ class Tracker:
 
             key = cv.waitKey(1)
             if key == 27:
-                if self.useImUtils:
+                if self.use_imutils:
                     self.cap.stop()
                 else:
                     self.cap.release()
