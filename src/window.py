@@ -4,6 +4,7 @@ import numpy as np
 from src.colors import RED
 from src.mouse_event import *
 
+
 class Window:
     def __init__(self, win_name):
         self.win_name = win_name
@@ -30,8 +31,6 @@ class Window:
 
     def setMouseCallback(self, tracker):
         cv.setMouseCallback(self.win_name, left_click_detect, tracker)
-        
+
     def close(self):
         cv.destroyAllWindows()
-
-    

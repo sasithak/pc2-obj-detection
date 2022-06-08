@@ -9,16 +9,16 @@ try:
     import winsound
 except ImportError:
     import os
-    def playSound(frequency,duration):
-        os.system('beep -f %s -l %s' % (frequency,duration))
+
+    def playSound(frequency, duration):
+        os.system('beep -f %s -l %s' % (frequency, duration))
 else:
-    def playSound(frequency,duration):
-        winsound.Beep(frequency,duration)
+    def playSound(frequency, duration):
+        winsound.Beep(frequency, duration)
 
 from src.window import Window
 from src.cv_config import *
 from src.colors import RED
-from src.mouse_event import *
 
 
 class Tracker:
@@ -37,8 +37,6 @@ class Tracker:
 
     def addPoint(self, point):
         self.points.append(point)
-
-        
 
     def process_frame(self, frame, outputs, confidence_level):
         frame_height, frame_width = frame.shape[:2]
@@ -74,22 +72,28 @@ class Tracker:
 
                 already_detected = False
                 for id, point in self.detected_objects.items():
-                    object_point_distance = math.hypot(box_center_x - point[0], box_center_y - point[1])
+                    object_point_distance = math.hypot(
+                        box_center_x - point[0], box_center_y - point[1])
 
                     if object_point_distance < 25:
                         left_point = (box_x, box_y + box_height)
                         right_point = (box_x + box_width, box_y + box_height)
-                        self.detected_objects[id] = (box_center_x, box_center_y)
-                        warning = self.detect(point, (box_center_x, box_center_y), left_point, right_point)
-                        objects.append([box_x, box_y, box_width, box_height, id, color, warning])
+                        self.detected_objects[id] = (
+                            box_center_x, box_center_y)
+                        warning = self.detect(
+                            point, (box_center_x, box_center_y), left_point, right_point)
+                        objects.append(
+                            [box_x, box_y, box_width, box_height, id, color, warning])
                         already_detected = True
                         break
 
                 if not already_detected:
-                    self.detected_objects[self.next_id] = (box_center_x, box_center_y)
-                    objects.append([box_x, box_y, box_width, box_height, self.next_id, color, False])
+                    self.detected_objects[self.next_id] = (
+                        box_center_x, box_center_y)
+                    objects.append(
+                        [box_x, box_y, box_width, box_height, self.next_id, color, False])
                     self.next_id += 1
-                    
+
             new_objects = {}
             for object in objects:
                 _, _, _, _, object_id, _, _ = object
@@ -103,11 +107,13 @@ class Tracker:
                 if (warning):
                     label = f"Warning!!! - {id}"
                     color = RED
-                    frequency = 2500  # Set Frequency To 2500 Hertz
-                    duration = 1000  # Set Duration To 1000 ms == 1 second
+                    frequency = 2500
+                    duration = 1000
                     playSound(frequency, duration)
-                self.window.show_rectangle(frame, (box_x, box_y), (box_x + box_width, box_y + box_height), color, 2)
-                self.window.put_label(frame, label, (box_x, box_y - 15), color, 2)
+                self.window.show_rectangle(
+                    frame, (box_x, box_y), (box_x + box_width, box_y + box_height), color, 2)
+                self.window.put_label(
+                    frame, label, (box_x, box_y - 15), color, 2)
 
     def detect(self, old_location, new_location, left, right):
         initial_point = Point(new_location[0], new_location[1])
