@@ -19,3 +19,5 @@
 
 1. Move the terminal to root `/pc2-obj-detection` directory.
 2. Run command `python main.py` or `python3 main.py` to run the program.
+3. Press the `space bar` to pause the video and then press any key to resume.
+4. Press the `esc` key to exit from the program.
