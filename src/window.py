@@ -30,7 +30,11 @@ class Window:
                    self.label_font_scale, color, thickness)
 
     def put_overlay(self, text):
-        cv.displayOverlay(self.win_name, text)
+        try:
+            cv.displayOverlay(self.win_name, text)
+        except:
+            # issue regarding the QT library
+            pass
 
     def setMouseCallback(self, tracker):
         cv.setMouseCallback(self.win_name, left_click_detect, tracker)
