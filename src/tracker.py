@@ -143,7 +143,7 @@ class Tracker:
         cv.waitKey(0)
         self.window.put_overlay("""
             Press the space bar to pause the video.
-            Press the `esc` key to exit from the program.
+            Press the esc key to exit from the program.
         """)
 
         while self.cap.more() if self.use_imutils else True:
@@ -171,7 +171,10 @@ class Tracker:
                 self.window.close()
                 break
             elif key == ord(' '):
-                self.window.put_overlay("Press any key to resume.")
+                self.window.put_overlay("""
+                    Paused!
+                    Press any key to resume.
+                """)
                 self.window.show_frame(frame)
                 cv.waitKey(0)
                 self.window.put_overlay("""
