@@ -2,15 +2,19 @@ import cv2 as cv
 import numpy as np
 from imutils.video import FileVideoStream
 import math
+from shapely.geometry import Point
+from shapely.geometry.polygon import Polygon
 
 from src.window import Window
 from src.cv_config import *
+from src.colors import RED
 
 
 class Tracker:
-    def __init__(self, video_path, use_imutils):
+    def __init__(self, video_path, fps, use_imutils):
         self.use_imutils = use_imutils
         self.video_path = video_path
+        self.fps = fps
         self.window = Window('Tracker')
         if use_imutils:
             self.cap = FileVideoStream(video_path).start()
@@ -18,6 +22,7 @@ class Tracker:
             self.cap = cv.VideoCapture(video_path)
         self.detected_objects = {}
         self.next_id = 0
+        self.points = [(328, 619), (569, 469), (724, 469), (920, 619)]
 
     def process_frame(self, frame, outputs, confidence_level):
         frame_height, frame_width = frame.shape[:2]
@@ -57,26 +62,40 @@ class Tracker:
 
                     if object_point_distance < 25:
                         self.detected_objects[id] = (box_center_x, box_center_y)
-                        objects.append([box_x, box_y, box_width, box_height, id])
+                        warning = self.detect(point, (box_center_x, box_center_y))
+                        objects.append([box_x, box_y, box_width, box_height, id, color, warning])
                         already_detected = True
                         break
 
                 if not already_detected:
                     self.detected_objects[self.next_id] = (box_center_x, box_center_y)
-                    objects.append([box_x, box_y, box_width, box_height, self.next_id])
+                    objects.append([box_x, box_y, box_width, box_height, self.next_id, color, False])
                     self.next_id += 1
                     
             new_objects = {}
             for object in objects:
-                _, _, _, _, object_id = object
+                _, _, _, _, object_id, _, _ = object
                 new_objects[object_id] = self.detected_objects[object_id]
 
             self.detected_objects = new_objects.copy()
 
             for object in objects:
-                box_x, box_y, box_width, box_height, id = object
+                box_x, box_y, box_width, box_height, id, color, warning = object
+                label = str(id)
+                if (warning):
+                    label = f"Warning!!! - {id}"
+                    color = RED
                 self.window.show_rectangle(frame, (box_x, box_y), (box_x + box_width, box_y + box_height), color, 2)
-                self.window.put_label(frame, str(id), (box_x, box_y - 15), (255, 0, 0), 2)
+                self.window.put_label(frame, label, (box_x, box_y - 15), color, 2)
+
+    def detect(self, old_location, new_location):
+        x_speed = (new_location[0] - old_location[0]) * self.fps
+        y_speed = (new_location[1] - old_location[1]) * self.fps
+        x = new_location[0] + x_speed * 2
+        y = new_location[1] + y_speed * 2
+        point = Point(x, y)
+        polygon = Polygon(self.points)
+        return polygon.contains(point)
 
     def run(self):
         while self.cap.more() if self.use_imutils else True:
@@ -92,6 +111,7 @@ class Tracker:
             outputs = np.vstack(net.forward(output_layers))
 
             self.process_frame(frame, outputs, 0.5)
+            self.window.show_danger_zone(frame, self.points)
             self.window.show_frame(frame)
 
             key = cv.waitKey(1)

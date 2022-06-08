@@ -1,9 +1,6 @@
 import cv2 as cv
 import numpy as np
 
-
-WHITE = (255, 255, 255)
-
 # Load names of classes and get random colors
 classes = open('config/coco.names').read().strip().split('\n')
 np.random.seed(42)

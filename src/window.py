@@ -1,5 +1,7 @@
 import cv2 as cv
+import numpy as np
 
+from src.colors import RED
 
 class Window:
     def __init__(self, win_name):
@@ -13,6 +15,9 @@ class Window:
 
     def show_rectangle(self, frame, pt1, pt2, color, thickness):
         cv.rectangle(frame, pt1, pt2, color, thickness)
+
+    def show_danger_zone(self, frame, points):
+        cv.polylines(frame, np.array([points]), True, RED, 2)
 
     def put_text(self, frame, text, org, color, thickness):
         cv.putText(frame, text, org, self.font_face,
