@@ -39,8 +39,11 @@ class Tracker:
     def addPoint(self, point):
         if (len(self.first_frame) > 0):
             self.points.append(point)
-            self.window.show_danger_zone(self.first_frame, self.points)
-            self.window.show_frame(self.first_frame)
+            self.show(self.first_frame)
+
+    def show(self, frame):
+        self.window.show_danger_zone(frame, self.points)
+        self.window.show_frame(frame)
 
     def process_frame(self, frame, outputs, confidence_level):
         frame_height, frame_width = frame.shape[:2]
@@ -131,32 +134,27 @@ class Tracker:
         polygon = Polygon(self.points)
         return polygon.contains(point) or polygon.contains(initial_point) or polygon.contains(left_point) or polygon.contains(right_point)
 
-    def run(self):
+    def read_frame(self):
         if self.use_imutils:
             frame = self.cap.read()
         else:
             ret, frame = self.cap.read()
+        return frame
+
+    def run(self):
+        frame = self.read_frame()
 
         self.first_frame = frame
-        self.window.show_frame(frame)
+        self.show(frame)
         self.window.setMouseCallback(self)
-        self.window.put_overlay("""
-            Click the points where vertices of the danger zone should be.
-            Then press any key to continue.
-        """)
+        self.show_draw_message()
 
         cv.waitKey(0)
         self.first_frame = []
-        self.window.put_overlay("""
-            Press the space bar to pause the video.
-            Press the esc key to exit from the program.
-        """)
+        self.show_play_message()
 
         while self.cap.more() if self.use_imutils else True:
-            if self.use_imutils:
-                frame = self.cap.read()
-            else:
-                ret, frame = self.cap.read()
+            frame = self.read_frame()
 
             blob = cv.dnn.blobFromImage(
                 frame, 1/255.0, (320, 320), (0, 0, 0), True, crop=False)
@@ -165,8 +163,7 @@ class Tracker:
             outputs = np.vstack(net.forward(output_layers))
 
             self.process_frame(frame, outputs, 0.5)
-            self.window.show_danger_zone(frame, self.points)
-            self.window.show_frame(frame)
+            self.show(frame)
 
             key = cv.waitKey(1)
             if key == 27:
@@ -176,14 +173,36 @@ class Tracker:
                     self.cap.release()
                 self.window.close()
                 break
+
             elif key == ord(' '):
-                self.window.put_overlay("""
-                    Paused!
-                    Press any key to resume.
-                """)
-                self.window.show_frame(frame)
+                self.show_pause_message()
+                self.show(frame)
                 cv.waitKey(0)
-                self.window.put_overlay("""
-                    Press the space bar to pause the video.
-                    Press the esc key to exit from the program.
-                """)
+                self.show_play_message()
+
+            elif key == ord('r'):
+                frame = self.read_frame()
+                self.first_frame = frame
+                self.show_draw_message()
+                self.points = []
+                self.show(frame)
+                cv.waitKey(0)
+
+    def show_draw_message(self):
+        self.window.put_overlay("""
+            Click the points where vertices of the danger zone should be.
+            Then press any key to continue.
+        """)
+
+    def show_play_message(self):
+        self.window.put_overlay("""
+            Press the r key to redraw the danger zone.
+            Press the space bar to pause the video.
+            Press the esc key to exit from the program.
+        """)
+
+    def show_pause_message(self):
+        self.window.put_overlay("""
+            Paused!
+            Press any key to resume.
+        """)

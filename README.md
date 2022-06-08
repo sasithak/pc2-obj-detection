@@ -24,7 +24,7 @@
 3. Make a copy of `.env.example` and name it `.env` at the root `/pc2-obj-detection` directory.
 4. Enter the path of the video to the `VIDEO_PATH` variable of the `.env` file.
 5. Enter the frame rate of the video as an FPS value to the `VIDEO_FPS` variable of the `.env` file.
-6. Set `USE_IMUTILS` variable of the `.env` file to `True` if you want to buffer frames using imutils package and to `False` otherwise.
+6. Set the `USE_IMUTILS` variable of the `.env` file to `True` if you want to buffer frames using imutils package and to `False` otherwise.
 
 ## Running
 
@@ -33,5 +33,6 @@
 3. The video will be paused at the first frame to mark the danger zone.
 4. Click the points where vertices of the danger zone should be.
 5. Then press any key to continue.
-6. Press the `space bar` to pause the video and then press any key to resume.
-7. Press the `esc` key to exit from the program.
+6. Press the `r` key to redraw the danger zone.
+7. Press the `space bar` to pause the video and then press any key to resume.
+8. Press the `esc` key to exit from the program.
