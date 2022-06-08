@@ -1,8 +1,17 @@
-# Vehicle Detection using YoloV3
+# Vehicle Collision Warning System from Dash Cam Video Stream
+
+## Team - Code Devours
+
+### Team Members
+
+- 190159D - Samadhi Kariyawasam
+- 190257C - Thamindu Sathruwan
+- 190332D - Sasitha Kumarasinghe
+- 190451P - Shilpa Perera
 
 ## Installing required packages
 
-1. Run `pip install opencv-python` to install OpenCv.
+1. Run `pip install opencv-python` to install OpenCV.
 2. Run `pip install numpy` to install Numpy.
 3. Run `pip install python-dotenv` to install Dotenv.
 4. Run `pip install --upgrade imutils` to install imutils.
