@@ -34,9 +34,13 @@ class Tracker:
         self.detected_objects = {}
         self.next_id = 0
         self.points = []
+        self.first_frame = []
 
     def addPoint(self, point):
-        self.points.append(point)
+        if (len(self.first_frame) > 0):
+            self.points.append(point)
+            self.window.show_danger_zone(self.first_frame, self.points)
+            self.window.show_frame(self.first_frame)
 
     def process_frame(self, frame, outputs, confidence_level):
         frame_height, frame_width = frame.shape[:2]
@@ -133,6 +137,7 @@ class Tracker:
         else:
             ret, frame = self.cap.read()
 
+        self.first_frame = frame
         self.window.show_frame(frame)
         self.window.setMouseCallback(self)
         self.window.put_overlay("""
@@ -141,6 +146,7 @@ class Tracker:
         """)
 
         cv.waitKey(0)
+        self.first_frame = []
         self.window.put_overlay("""
             Press the space bar to pause the video.
             Press the esc key to exit from the program.
