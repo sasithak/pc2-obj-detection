@@ -135,8 +135,16 @@ class Tracker:
 
         self.window.show_frame(frame)
         self.window.setMouseCallback(self)
+        self.window.put_overlay("""
+            Click the points where vertices of the danger zone should be.
+            Then press any key to continue.
+        """)
 
         cv.waitKey(0)
+        self.window.put_overlay("""
+            Press the space bar to pause the video.
+            Press the `esc` key to exit from the program.
+        """)
 
         while self.cap.more() if self.use_imutils else True:
             if self.use_imutils:
@@ -163,4 +171,10 @@ class Tracker:
                 self.window.close()
                 break
             elif key == ord(' '):
+                self.window.put_overlay("Press any key to resume.")
+                self.window.show_frame(frame)
                 cv.waitKey(0)
+                self.window.put_overlay("""
+                    Press the space bar to pause the video.
+                    Press the esc key to exit from the program.
+                """)
