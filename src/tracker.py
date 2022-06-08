@@ -2,12 +2,14 @@ import cv2 as cv
 import numpy as np
 from imutils.video import FileVideoStream
 import math
+import winsound
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
 
 from src.window import Window
 from src.cv_config import *
 from src.colors import RED
+
 
 
 class Tracker:
@@ -87,6 +89,9 @@ class Tracker:
                 if (warning):
                     label = f"Warning!!! - {id}"
                     color = RED
+                    frequency = 2500  # Set Frequency To 2500 Hertz
+                    duration = 1000  # Set Duration To 1000 ms == 1 second
+                    winsound.Beep(frequency, duration)
                 self.window.show_rectangle(frame, (box_x, box_y), (box_x + box_width, box_y + box_height), color, 2)
                 self.window.put_label(frame, label, (box_x, box_y - 15), color, 2)
 
