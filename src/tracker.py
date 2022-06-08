@@ -9,7 +9,7 @@ from shapely.geometry.polygon import Polygon
 from src.window import Window
 from src.cv_config import *
 from src.colors import RED
-
+from src.mouse_event import *
 
 
 class Tracker:
@@ -24,7 +24,12 @@ class Tracker:
             self.cap = cv.VideoCapture(video_path)
         self.detected_objects = {}
         self.next_id = 0
-        self.points = [(328, 619), (569, 469), (724, 469), (920, 619)]
+        self.points = []
+
+    def addPoint(self, point):
+        self.points.append(point)
+
+        
 
     def process_frame(self, frame, outputs, confidence_level):
         frame_height, frame_width = frame.shape[:2]
@@ -108,6 +113,16 @@ class Tracker:
         return polygon.contains(point) or polygon.contains(initial_point) or polygon.contains(left_point) or polygon.contains(right_point)
 
     def run(self):
+        if self.use_imutils:
+            frame = self.cap.read()
+        else:
+            ret, frame = self.cap.read()
+
+        self.window.show_frame(frame)
+        self.window.setMouseCallback(self)
+
+        cv.waitKey(0)
+
         while self.cap.more() if self.use_imutils else True:
             if self.use_imutils:
                 frame = self.cap.read()

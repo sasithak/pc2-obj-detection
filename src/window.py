@@ -2,6 +2,7 @@ import cv2 as cv
 import numpy as np
 
 from src.colors import RED
+from src.mouse_event import *
 
 class Window:
     def __init__(self, win_name):
@@ -27,5 +28,10 @@ class Window:
         cv.putText(frame, text, org, self.font_face,
                    self.label_font_scale, color, thickness)
 
+    def setMouseCallback(self, tracker):
+        cv.setMouseCallback(self.win_name, left_click_detect, tracker)
+        
     def close(self):
         cv.destroyAllWindows()
+
+    
