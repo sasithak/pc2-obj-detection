@@ -61,8 +61,10 @@ class Tracker:
                     object_point_distance = math.hypot(box_center_x - point[0], box_center_y - point[1])
 
                     if object_point_distance < 25:
+                        left_point = (box_x, box_y + box_height)
+                        right_point = (box_x + box_width, box_y + box_height)
                         self.detected_objects[id] = (box_center_x, box_center_y)
-                        warning = self.detect(point, (box_center_x, box_center_y))
+                        warning = self.detect(point, (box_center_x, box_center_y), left_point, right_point)
                         objects.append([box_x, box_y, box_width, box_height, id, color, warning])
                         already_detected = True
                         break
@@ -88,14 +90,17 @@ class Tracker:
                 self.window.show_rectangle(frame, (box_x, box_y), (box_x + box_width, box_y + box_height), color, 2)
                 self.window.put_label(frame, label, (box_x, box_y - 15), color, 2)
 
-    def detect(self, old_location, new_location):
+    def detect(self, old_location, new_location, left, right):
+        initial_point = Point(new_location[0], new_location[1])
+        left_point = Point(left[0], left[1])
+        right_point = Point(right[0], right[1])
         x_speed = (new_location[0] - old_location[0]) * self.fps
         y_speed = (new_location[1] - old_location[1]) * self.fps
         x = new_location[0] + x_speed * 2
         y = new_location[1] + y_speed * 2
         point = Point(x, y)
         polygon = Polygon(self.points)
-        return polygon.contains(point)
+        return polygon.contains(point) or polygon.contains(initial_point) or polygon.contains(left_point) or polygon.contains(right_point)
 
     def run(self):
         while self.cap.more() if self.use_imutils else True:
