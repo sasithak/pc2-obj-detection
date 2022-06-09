@@ -31,7 +31,7 @@
 1. Move the terminal to root `/pc2-obj-detection` directory.
 2. Run command `python main.py` or `python3 main.py` to run the program.
 3. The video will be paused at the first frame to mark the danger zone.
-4. Click the points where vertices of the danger zone should be.
+4. Click the points where the vertices of the danger zone should be.
 5. Then press any key to continue.
 6. Press the `r` key to redraw the danger zone.
 7. Press the `space bar` to pause the video and then press any key to resume.

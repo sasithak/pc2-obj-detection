@@ -190,7 +190,7 @@ class Tracker:
 
     def show_draw_message(self):
         self.window.put_overlay("""
-            Click the points where vertices of the danger zone should be.
+            Click the points where the vertices of the danger zone should be.
             Then press any key to continue.
         """)
 

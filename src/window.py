@@ -33,11 +33,11 @@ class Window:
         try:
             cv.displayOverlay(self.win_name, text)
         except:
-            # issue regarding the QT library
+            # OpenCV library for Windows does not support functions which need QT library
             pass
 
     def setMouseCallback(self, tracker):
         cv.setMouseCallback(self.win_name, left_click_detect, tracker)
 
     def close(self):
-        cv.destroyAllWindows()
+        cv.destroyWindow(self.win_name)
