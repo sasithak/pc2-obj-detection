@@ -123,16 +123,46 @@ class Tracker:
                     frame, label, (box_x, box_y - 15), color, 2)
 
     def detect(self, old_location, new_location, left, right):
-        initial_point = Point(new_location[0], new_location[1])
-        left_point = Point(left[0], left[1])
-        right_point = Point(right[0], right[1])
         x_speed = (new_location[0] - old_location[0]) * self.fps
         y_speed = (new_location[1] - old_location[1]) * self.fps
-        x = new_location[0] + x_speed * 2
-        y = new_location[1] + y_speed * 2
-        point = Point(x, y)
+
+        current_mid_point = Point(new_location[0], new_location[1])
+        current_left_point = Point(left[0], left[1])
+        current_right_point = Point(right[0], right[1])
+        current_bottom_center_point = Point((left[0] + right[0]) / 2, right[1])
+
+        next_mid_point_1s = Point(
+            new_location[0] + x_speed, new_location[1] + y_speed * 2)
+        next_left_point_1s = Point(left[0] + x_speed, left[1] + y_speed * 2)
+        next_right_point_1s = Point(
+            right[0] + x_speed * 2, right[1] + y_speed)
+        next_bottom_center_point_1s = Point(
+            (left[0] + right[0]) / 2 + x_speed, right[1] + y_speed * 2)
+
+        next_mid_point_2s = Point(
+            new_location[0] + x_speed * 2, new_location[1] + y_speed * 2)
+        next_left_point_2s = Point(
+            left[0] + x_speed * 2, left[1] + y_speed * 2)
+        next_right_point_2s = Point(
+            right[0] + x_speed * 2, right[1] + y_speed * 2)
+        next_bottom_center_point_2s = Point(
+            (left[0] + right[0]) / 2 + x_speed * 2, right[1] + y_speed * 2)
         polygon = Polygon(self.points)
-        return polygon.contains(point) or polygon.contains(initial_point) or polygon.contains(left_point) or polygon.contains(right_point)
+
+        return (
+            polygon.contains(current_mid_point)
+            or polygon.contains(current_left_point)
+            or polygon.contains(current_right_point)
+            or polygon.contains(current_bottom_center_point)
+            or polygon.contains(next_mid_point_1s)
+            or polygon.contains(next_left_point_1s)
+            or polygon.contains(next_right_point_1s)
+            or polygon.contains(next_bottom_center_point_1s)
+            or polygon.contains(next_mid_point_2s)
+            or polygon.contains(next_left_point_2s)
+            or polygon.contains(next_right_point_2s)
+            or polygon.contains(next_bottom_center_point_2s)
+        )
 
     def read_frame(self):
         if self.use_imutils:
