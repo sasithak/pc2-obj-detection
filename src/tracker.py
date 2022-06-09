@@ -31,6 +31,9 @@ class Tracker:
             self.cap = FileVideoStream(video_path).start()
         else:
             self.cap = cv.VideoCapture(video_path)
+        self.fourcc = fourcc = cv.VideoWriter_fourcc('M', 'J', 'P', 'G')
+        self.out = cv.VideoWriter(
+            '001.avi', self.fourcc, self.fps, (1280, 720), False)
         self.detected_objects = {}
         self.next_id = 0
         self.points = []
@@ -139,12 +142,14 @@ class Tracker:
             frame = self.cap.read()
         else:
             ret, frame = self.cap.read()
-        return frame
+        return cv.resize(frame, (1280, 720))
 
     def run(self):
         frame = self.read_frame()
 
         self.first_frame = frame
+        self.out.write(frame)
+        print('out')
         self.show(frame)
         self.window.setMouseCallback(self)
         self.show_draw_message()
@@ -171,6 +176,8 @@ class Tracker:
                     self.cap.stop()
                 else:
                     self.cap.release()
+                self.out.release()
+                print('out release')
                 self.window.close()
                 break
 

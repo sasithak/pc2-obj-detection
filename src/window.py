@@ -15,6 +15,9 @@ class Window:
     def show_frame(self, frame):
         cv.imshow(self.win_name, frame)
 
+    # def save_frame(tracker, frame):
+    #     tracker.out.write(frame)
+
     def show_rectangle(self, frame, pt1, pt2, color, thickness):
         cv.rectangle(frame, pt1, pt2, color, thickness)
 
