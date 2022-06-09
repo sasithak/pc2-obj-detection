@@ -187,6 +187,7 @@ class Tracker:
                 self.points = []
                 self.show(frame)
                 cv.waitKey(0)
+                self.show_play_message()
 
     def show_draw_message(self):
         self.window.put_overlay("""
