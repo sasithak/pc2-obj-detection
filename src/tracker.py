@@ -195,8 +195,8 @@ class Tracker:
             outputs = np.vstack(net.forward(output_layers))
 
             self.process_frame(frame, outputs, 0.5)
-            self.out.write(frame)
             self.show(frame)
+            self.out.write(frame)
 
             key = cv.waitKey(1)
             if key == 27:
